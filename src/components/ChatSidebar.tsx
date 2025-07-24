@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlusIcon, MessageSquareIcon, PenToolIcon, Trash2Icon } from "lucide-react";
+import { ApiKeySettings } from "@/components/ApiKeySettings";
 import { cn } from "@/lib/utils";
 
 interface Chat {
@@ -93,7 +94,8 @@ export function ChatSidebar({ chats, activeChat, onNewChat, onSelectChat, onDele
       </ScrollArea>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border">
+      <div className="p-4 border-t border-sidebar-border space-y-3">
+        <ApiKeySettings />
         <div className="text-xs text-sidebar-foreground/50 text-center">
           ChatGPT Clone v1.0
         </div>

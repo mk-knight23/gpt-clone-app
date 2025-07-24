@@ -15,22 +15,38 @@ export interface Chat {
   timestamp: Date;
 }
 
-// Mock API call - replace with your actual API integration
-const mockApiCall = async (message: string): Promise<string> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-  
-  // Mock responses based on input
-  const responses = [
-    "I understand your question. Let me help you with that.",
-    "That's an interesting point. Here's what I think about it...",
-    "Based on what you've asked, I can provide some insights.",
-    "Great question! Let me break this down for you.",
-    "I can help you with that. Here's my response...",
-  ];
-  
-  return responses[Math.floor(Math.random() * responses.length)] + 
-    ` You asked: "${message}". This is a mock response. To connect to a real API, replace the mockApiCall function in useChat.ts with your actual API integration.`;
+// OpenAI API integration
+const callOpenAI = async (message: string, apiKey: string): Promise<string> => {
+  if (!apiKey) {
+    throw new Error("OpenAI API key is required");
+  }
+
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'user',
+          content: message
+        }
+      ],
+      max_tokens: 1000,
+      temperature: 0.7,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error?.message || 'Failed to get response from OpenAI');
+  }
+
+  const data = await response.json();
+  return data.choices[0]?.message?.content || 'No response received';
 };
 
 export function useChat() {
@@ -79,8 +95,19 @@ export function useChat() {
     setIsLoading(true);
 
     try {
-      // Call your API here
-      const response = await mockApiCall(content);
+      // Get API key from localStorage
+      const apiKey = localStorage.getItem('openai-api-key');
+      if (!apiKey) {
+        toast({
+          title: "API Key Required",
+          description: "Please set your OpenAI API key in the settings.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Call OpenAI API
+      const response = await callOpenAI(content, apiKey);
       
       const assistantMessage: Message = {
         id: `msg-${Date.now()}-assistant`,
