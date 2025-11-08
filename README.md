@@ -1,73 +1,182 @@
-# Welcome to your Lovable project
+# 🤖 CHUTES AI Chat
 
-## Project info
+> A modern, responsive AI chat application powered by 5 free AI models through CHUTES API
 
-**URL**: https://lovable.dev/projects/286eb5e3-068f-43b1-a749-d8b164e620dc
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_App-blue?style=for-the-badge&logo=react)](https://chutes-ai-chat.vercel.app)
+[![GitHub](https://img.shields.io/badge/GitHub-mk--knight23%2Fgpt--clone--app-black?style=for-the-badge&logo=github)](https://github.com/mk-knight23/gpt-clone-app)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+### 🎛️ **5 Free AI Models**
+- **Gemma 3 4B It** (Unsloth) - Google's latest instruction-following model
+- **GLM 4.5 Air** (Zai Org) - Most popular, high performance and reliability
+- **LongCat Flash Chat FP8** (Meituan) - Fast inference with excellent performance
+- **GPT OSS 20B** (OpenAI) - OpenAI compatible model
+- **Tongyi DeepResearch 30B A3B** (Alibaba) - Research-focused deep analysis
 
-**Use Lovable**
+### 💬 **Chat Interface**
+- Real-time AI responses
+- Model selection dropdown
+- Chat history management
+- Delete individual chats
+- Typing indicators
+- Mobile responsive design
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/286eb5e3-068f-43b1-a749-d8b164e620dc) and start prompting.
+### 🎨 **Modern UI/UX**
+- Clean, professional interface
+- Dark/light theme support
+- Mobile-first responsive design
+- Smooth animations and transitions
+- Accessible design patterns
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🔒 **Secure & Private**
+- Environment variable configuration
+- No API keys exposed in code
+- Client-side only (no server required)
+- Safe for public deployment
 
-**Use your preferred IDE**
+## 🚀 Quick Demo
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Live Application
+[**👉 Try it now: CHUTES AI Chat**](https://chutes-ai-chat.vercel.app)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Local Development
+```bash
+# Clone the repository
+git clone https://github.com/mk-knight23/gpt-clone-app.git
+cd gpt-clone-app
 
-Follow these steps:
+# Install dependencies
+npm install
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Set up environment
+cp .env.example .env
+# Add your CHUTES API token to .env
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🛠️ Technology Stack
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI + Shadcn/ui
+- **Icons**: Lucide React
+- **AI Integration**: CHUTES API
+- **Deployment**: Vercel
+- **Version Control**: Git + GitHub
 
-**Use GitHub Codespaces**
+## 📁 Project Structure
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+src/
+├── components/
+│   ├── ui/              # Reusable UI components
+│   ├── ChatSidebar.tsx  # Sidebar with model selection
+│   ├── ChatInput.tsx    # Message input component
+│   ├── ChatMessage.tsx  # Individual message display
+│   ├── ModelSelector.tsx# Model selection dropdown
+│   └── TypingIndicator.tsx
+├── hooks/
+│   ├── useChat.ts       # Main chat logic & API integration
+│   ├── useToast.ts      # Toast notifications
+│   └── use-mobile.tsx   # Mobile detection hook
+├── lib/
+│   └── utils.ts         # Utility functions
+└── pages/
+    └── Index.tsx        # Main application page
+```
 
-## What technologies are used for this project?
+## 🎯 How to Use
 
-This project is built with:
+1. **Select Model**: Click the "Model" button in the sidebar
+2. **Start Chatting**: Type your message in the chat input
+3. **Get Responses**: AI will respond using the selected model
+4. **Switch Models**: Try different models for various response styles
+5. **Manage Chats**: Delete old conversations to keep things clean
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🚀 Deployment
 
-## How can I deploy this project?
+### Vercel (Recommended)
+1. **Fork/Clone** this repository
+2. **Connect to Vercel** with your GitHub account
+3. **Import Project** from your repository
+4. **Set Environment Variable**:
+   ```
+   VITE_CHUTES_API_TOKEN=your_chutes_api_token_here
+   ```
+5. **Deploy** - Your app will be live in 2-3 minutes!
 
-Simply open [Lovable](https://lovable.dev/projects/286eb5e3-068f-43b1-a749-d8b164e620dc) and click on Share -> Publish.
+### Other Platforms
+- **Netlify**: Same process as Vercel
+- **GitHub Pages**: Requires build process adjustment
+- **Custom Server**: Build with `npm run build` and serve `dist/` folder
 
-## Can I connect a custom domain to my Lovable project?
+## 🔑 API Configuration
 
-Yes, you can!
+### Getting Your CHUTES API Token
+1. Visit [chutes.ai](https://chutes.ai)
+2. Create a free account
+3. Generate an API token from your dashboard
+4. Use the token in environment variables
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Environment Variables
+```env
+# Required: Your CHUTES API token
+VITE_CHUTES_API_TOKEN=your_api_token_here
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 🎨 Screenshots
+
+### Main Chat Interface
+![Chat Interface](https://via.placeholder.com/800x400?text=CHUTES+AI+Chat+Interface)
+
+### Model Selection
+![Model Selection](https://via.placeholder.com/400x300?text=Model+Selection+Dropdown)
+
+### Mobile View
+![Mobile View](https://via.placeholder.com/300x600?text=Mobile+Responsive+Design)
+
+## 🌟 Key Highlights
+
+- **✅ 100% Free**: All 5 AI models are completely free to use
+- **✅ No Registration**: Works immediately with API token
+- **✅ Modern Tech**: Built with latest React + TypeScript
+- **✅ Production Ready**: Optimized for deployment
+- **✅ Open Source**: MIT License, feel free to fork and modify
+- **✅ Mobile Friendly**: Responsive design for all devices
+
+## 🤝 Contributing
+
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add some amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **CHUTES AI** for providing free AI model access
+- **Vercel** for seamless deployment platform
+- **Tailwind CSS** for the utility-first CSS framework
+- **Shadcn/ui** for the beautiful component library
+- **Lucide** for the clean icon set
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/mk-knight23/gpt-clone-app/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/mk-knight23/gpt-clone-app/discussions)
+- **Email**: Contact through GitHub
+
+---
+
+**Made with ❤️ by [mk-knight23](https://github.com/mk-knight23)**
+
+[Live Demo](https://chutes-ai-chat.vercel.app) • [GitHub](https://github.com/mk-knight23/gpt-clone-app) • [Report Bug](https://github.com/mk-knight23/gpt-clone-app/issues) • [Request Feature](https://github.com/mk-knight23/gpt-clone-app/issues)
