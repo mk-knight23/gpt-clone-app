@@ -7,55 +7,47 @@ import { SettingsIcon, EyeIcon, EyeOffIcon, KeyIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export function ApiKeySettings() {
-  const [apiKey, setApiKey] = useState("");
-  const [showKey, setShowKey] = useState(false);
+  const [apiToken, setApiToken] = useState("");
+  const [showToken, setShowToken] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Load API key from localStorage on component mount
-    const savedKey = localStorage.getItem('openai-api-key');
-    if (savedKey) {
-      setApiKey(savedKey);
+    // Load API token from localStorage on component mount
+    const savedToken = localStorage.getItem('chutes-api-token');
+    if (savedToken) {
+      setApiToken(savedToken);
     }
   }, []);
 
   const handleSave = () => {
-    if (!apiKey.trim()) {
+    if (!apiToken.trim()) {
       toast({
         title: "Error",
-        description: "Please enter a valid API key.",
+        description: "Please enter a valid API token.",
         variant: "destructive",
       });
       return;
     }
 
-    if (!apiKey.startsWith('sk-')) {
-      toast({
-        title: "Invalid API Key",
-        description: "OpenAI API keys should start with 'sk-'",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    localStorage.setItem('openai-api-key', apiKey);
+    localStorage.setItem('chutes-api-token', apiToken);
     setIsOpen(false);
     toast({
       title: "Success",
-      description: "API key saved successfully!",
+      description: "CHUTES API token saved successfully!",
     });
   };
 
   const handleClear = () => {
-    localStorage.removeItem('openai-api-key');
-    setApiKey("");
+    localStorage.removeItem('chutes-api-token');
+    setApiToken("");
     toast({
-      title: "API Key Cleared",
-      description: "Your API key has been removed.",
+      title: "API Token Cleared",
+      description: "Your CHUTES API token has been removed.",
     });
   };
 
-  const hasApiKey = localStorage.getItem('openai-api-key');
+  const hasLocalToken = localStorage.getItem('chutes-api-token');
+  const hasEnvToken = import.meta.env.VITE_CHUTES_API_TOKEN;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -64,11 +56,13 @@ export function ApiKeySettings() {
           variant="ghost"
           size="sm"
           className={`flex items-center space-x-2 ${
-            hasApiKey ? 'text-primary' : 'text-muted-foreground'
+            (hasLocalToken || hasEnvToken) ? 'text-primary' : 'text-muted-foreground'
           }`}
         >
           <KeyIcon className="w-4 h-4" />
-          <span>{hasApiKey ? 'API Key Set' : 'Set API Key'}</span>
+          <span>
+            {hasLocalToken ? 'API Token Set' : hasEnvToken ? 'Using Server Token' : 'Set API Token'}
+          </span>
         </Button>
       </DialogTrigger>
       
@@ -76,20 +70,45 @@ export function ApiKeySettings() {
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <SettingsIcon className="w-5 h-5" />
-            <span>OpenAI API Settings</span>
+            <span>CHUTES API Settings</span>
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
+          {/* Status Display */}
+          <div className="bg-muted/50 p-3 rounded-lg space-y-2">
+            <h4 className="text-sm font-medium">Current Configuration:</h4>
+            <div className="text-xs space-y-1">
+              {hasLocalToken && (
+                <div className="flex items-center space-x-2 text-green-700">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Local browser storage (active)</span>
+                </div>
+              )}
+              {hasEnvToken && !hasLocalToken && (
+                <div className="flex items-center space-x-2 text-blue-700">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Server environment (active)</span>
+                </div>
+              )}
+              {!hasLocalToken && !hasEnvToken && (
+                <div className="flex items-center space-x-2 text-red-700">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <span>No API token configured</span>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="space-y-2">
-            <Label htmlFor="api-key">OpenAI API Key</Label>
+            <Label htmlFor="api-token">CHUTES API Token (Local Storage)</Label>
             <div className="relative">
               <Input
-                id="api-key"
-                type={showKey ? "text" : "password"}
-                placeholder="sk-..."
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
+                id="api-token"
+                type={showToken ? "text" : "password"}
+                placeholder="Enter your CHUTES API token..."
+                value={apiToken}
+                onChange={(e) => setApiToken(e.target.value)}
                 className="pr-10"
               />
               <Button
@@ -97,9 +116,9 @@ export function ApiKeySettings() {
                 variant="ghost"
                 size="sm"
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowKey(!showKey)}
+                onClick={() => setShowToken(!showToken)}
               >
-                {showKey ? (
+                {showToken ? (
                   <EyeOffIcon className="h-4 w-4" />
                 ) : (
                   <EyeIcon className="h-4 w-4" />
@@ -107,25 +126,47 @@ export function ApiKeySettings() {
               </Button>
             </div>
             <p className="text-sm text-muted-foreground">
-              Your API key is stored locally in your browser and never sent to our servers.
+              Stored locally in your browser. Takes priority over server environment.
+            </p>
+          </div>
+
+          <div className="bg-amber-50 p-4 rounded-lg space-y-2">
+            <h4 className="text-sm font-medium text-amber-900">Server Deployment:</h4>
+            <p className="text-xs text-amber-800">
+              For server-side deployment, set <code className="bg-amber-200 px-1 rounded">VITE_CHUTES_API_TOKEN</code> 
+              in your <code className="bg-amber-200 px-1 rounded">.env</code> file.
+            </p>
+            <p className="text-xs text-amber-800">
+              Local storage takes precedence over environment variables.
             </p>
           </div>
 
           <div className="bg-muted/50 p-4 rounded-lg space-y-2">
-            <h4 className="text-sm font-medium">How to get your OpenAI API Key:</h4>
+            <h4 className="text-sm font-medium">How to get your CHUTES API Token:</h4>
             <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-              <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">platform.openai.com/api-keys</a></li>
-              <li>Sign in to your OpenAI account</li>
-              <li>Click "Create new secret key"</li>
-              <li>Copy the key and paste it above</li>
+              <li>Visit <a href="https://chutes.ai" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">chutes.ai</a></li>
+              <li>Create a free account or sign in</li>
+              <li>Navigate to your API settings or dashboard</li>
+              <li>Copy your API token and paste it above</li>
             </ol>
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-lg space-y-2">
+            <h4 className="text-sm font-medium text-blue-900">Available Free Models:</h4>
+            <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+              <li><strong>GLM 4.5 Air</strong> (zai-org) - Most popular</li>
+              <li><strong>Gemma 3 4B</strong> - Google model</li>
+              <li><strong>LongCat Flash Chat</strong> - Meituan</li>
+              <li><strong>GPT OSS 20B</strong> - OpenAI compatible</li>
+              <li><strong>Tongyi DeepResearch 30B</strong> - Alibaba</li>
+            </ul>
           </div>
 
           <div className="flex space-x-2">
             <Button onClick={handleSave} className="flex-1">
-              Save API Key
+              Save API Token
             </Button>
-            {hasApiKey && (
+            {hasLocalToken && (
               <Button onClick={handleClear} variant="outline">
                 Clear
               </Button>

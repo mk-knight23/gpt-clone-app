@@ -22,3 +22,36 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables - DO NOT UPLOAD .env with real tokens
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build output
+build/
+dist/
+
+# Dependencies
+node_modules/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp

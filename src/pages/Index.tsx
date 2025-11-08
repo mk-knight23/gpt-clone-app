@@ -78,7 +78,7 @@ const Index = () => {
               </div>
               <div className="space-y-2">
                 <h1 className="text-2xl font-bold text-foreground">
-                  Welcome to ChatGPT Clone
+                  Welcome to CHUTES AI Chat
                 </h1>
                 <p className="text-muted-foreground">
                   Start a conversation by creating a new chat or select an existing one from the sidebar.
@@ -87,11 +87,11 @@ const Index = () => {
               <div className="space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span>Powered by AI</span>
+                  <span>Powered by CHUTES AI</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <span>Real-time responses</span>
+                  <span>Free AI models</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-2 h-2 bg-primary rounded-full"></div>

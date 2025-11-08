@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlusIcon, MessageSquareIcon, PenToolIcon, Trash2Icon } from "lucide-react";
-import { ApiKeySettings } from "@/components/ApiKeySettings";
+import { ModelSelector } from "@/components/ModelSelector";
 import { cn } from "@/lib/utils";
 
 interface Chat {
@@ -95,9 +95,9 @@ export function ChatSidebar({ chats, activeChat, onNewChat, onSelectChat, onDele
 
       {/* Footer */}
       <div className="p-4 border-t border-sidebar-border space-y-3">
-        <ApiKeySettings />
+        <ModelSelector />
         <div className="text-xs text-sidebar-foreground/50 text-center">
-          ChatGPT Clone v1.0
+          CHUTES AI Chat v1.0
         </div>
       </div>
     </div>
