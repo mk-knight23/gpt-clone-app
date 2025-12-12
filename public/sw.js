@@ -1,7 +1,9 @@
-// CHUTES AI Chat Service Worker
-const CACHE_NAME = 'chutes-ai-chat-v2.0';
-const STATIC_CACHE = 'chutes-static-v2.0';
-const DYNAMIC_CACHE = 'chutes-dynamic-v2.0';
+// CHUTES AI Chat Service Worker v4.0 - Multi-Provider Support
+// Cache version should be updated with each deployment
+const CACHE_NAME = 'chutes-ai-chat-v0-0-0';
+const STATIC_CACHE = 'chutes-static-v0-0-0';
+const DYNAMIC_CACHE = 'chutes-dynamic-v0-0-0';
+const API_CACHE = 'chutes-api-v0-0-0';
 
 // Files to cache for offline functionality
 const STATIC_FILES = [

@@ -2,31 +2,10 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Initialize analytics and error tracking
-import { analytics } from './lib/analytics'
-import { security } from './lib/security'
-
-// Track app initialization
-analytics.trackEvent({
-  name: 'app_initialized',
-  category: 'engagement',
-  label: 'main_entry'
-})
-
-// Initialize security cleanup
-security.cleanup()
-
 // Error boundary for unhandled errors
 window.addEventListener('error', (event) => {
-  analytics.reportError({
-    message: event.message,
-    stack: event.error?.stack,
-    url: event.filename || window.location.href,
-    lineNumber: event.lineno,
-    columnNumber: event.colno,
-    severity: 'medium'
-  })
-})
+  console.error('Application error:', event.error);
+});
 
 // Create and render the React application
 const rootElement = document.getElementById("root")
@@ -42,12 +21,7 @@ try {
   root.render(<App />)
 } catch (error) {
   console.error('Failed to render application:', error)
-  analytics.reportError({
-    message: 'Application render failed',
-    stack: error instanceof Error ? error.stack : undefined,
-    severity: 'critical'
-  })
-  
+
   // Fallback UI
   rootElement.innerHTML = `
     <div style="

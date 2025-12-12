@@ -156,17 +156,6 @@ export function ModelSelector() {
                 </div>
               </div>
             </div>
-
-            <div className="bg-blue-50 p-4 rounded-lg space-y-2">
-              <h4 className="text-sm font-medium text-blue-900">About Free Models</h4>
-              <ul className="text-xs text-blue-800 space-y-1">
-                <li>• All models are completely free to use</li>
-                <li>• No usage limits or restrictions</li>
-                <li>• Different models excel at different tasks</li>
-                <li>• You can switch models anytime</li>
-                <li>• Page will reload after selection to apply changes</li>
-              </ul>
-            </div>
           </div>
         </DialogContent>
       </Dialog>

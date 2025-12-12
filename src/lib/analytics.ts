@@ -113,7 +113,7 @@ class AnalyticsManager {
     const metrics: Partial<PerformanceMetrics> = {};
 
     switch (entry.entryType) {
-      case 'paint':
+      case 'paint': {
         if (entry.name === 'first-contentful-paint') {
           metrics.firstContentfulPaint = entry.startTime;
           this.trackEvent({
@@ -123,7 +123,8 @@ class AnalyticsManager {
           });
         }
         break;
-      case 'largest-contentful-paint':
+      }
+      case 'largest-contentful-paint': {
         metrics.largestContentfulPaint = entry.startTime;
         this.trackEvent({
           name: 'largest_contentful_paint',
@@ -131,7 +132,8 @@ class AnalyticsManager {
           value: entry.startTime
         });
         break;
-      case 'first-input':
+      }
+      case 'first-input': {
         const firstInputEntry = entry as PerformanceEventTiming;
         metrics.firstInputDelay = firstInputEntry.processingStart - entry.startTime;
         this.trackEvent({
@@ -140,7 +142,8 @@ class AnalyticsManager {
           value: metrics.firstInputDelay
         });
         break;
-      case 'layout-shift':
+      }
+      case 'layout-shift': {
         const layoutShiftEntry = entry as unknown as { hadRecentInput: boolean; value: number };
         if (!layoutShiftEntry.hadRecentInput) {
           metrics.cumulativeLayoutShift = layoutShiftEntry.value;
@@ -151,6 +154,7 @@ class AnalyticsManager {
           });
         }
         break;
+      }
     }
   }
 
@@ -336,8 +340,9 @@ class AnalyticsManager {
   // Analytics Service Integration
   private sendToAnalyticsService(event: AnalyticsEvent): void {
     // Google Analytics 4 integration
-    if (typeof (window as any).gtag !== 'undefined') {
-      (window as any).gtag('event', event.name, {
+    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+    if (typeof gtag !== 'undefined') {
+      gtag('event', event.name, {
         event_category: event.category,
         event_label: event.label,
         value: event.value,

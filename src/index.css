@@ -2,83 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Enhanced Design System with Glassmorphism & Modern Animations */
+/* Neo-Glass + Glow Design System for CHUTES AI Chat v3.0 */
 
 @layer base {
   :root {
-    /* Enhanced Chat app dark theme colors */
-    --background: 217 33% 7%;
-    --foreground: 213 31% 91%;
-    
-    --card: 217 33% 10%;
-    --card-foreground: 213 31% 91%;
-    
-    --popover: 217 33% 10%;
-    --popover-foreground: 213 31% 91%;
-    
-    --primary: 166 76% 46%;
-    --primary-foreground: 217 33% 7%;
-    
-    --secondary: 217 33% 15%;
-    --secondary-foreground: 213 31% 91%;
-    
-    --muted: 217 33% 12%;
-    --muted-foreground: 217 18% 55%;
-    
-    --accent: 166 76% 46%;
-    --accent-foreground: 217 33% 7%;
-    
-    --destructive: 0 84% 60%;
+    /* Neo-Glass Dark Theme */
+    --background: 217 33% 4%;
+    --foreground: 213 31% 95%;
+
+    --card: 217 33% 6%;
+    --card-foreground: 213 31% 95%;
+
+    --popover: 217 33% 6%;
+    --popover-foreground: 213 31% 95%;
+
+    --primary: 166 76% 50%;
+    --primary-foreground: 217 33% 4%;
+
+    --secondary: 217 33% 12%;
+    --secondary-foreground: 213 31% 95%;
+
+    --muted: 217 33% 10%;
+    --muted-foreground: 217 18% 60%;
+
+    --accent: 166 76% 50%;
+    --accent-foreground: 217 33% 4%;
+
+    --destructive: 0 84% 65%;
     --destructive-foreground: 210 40% 98%;
-    
-    --border: 217 33% 15%;
-    --input: 217 33% 15%;
-    --ring: 166 76% 46%;
-    
-    --radius: 0.75rem;
-    
-    /* Enhanced Chat specific colors */
-    --chat-user-bg: 166 76% 46%;
-    --chat-user-fg: 217 33% 7%;
-    --chat-assistant-bg: 217 33% 15%;
-    --chat-assistant-fg: 213 31% 91%;
-    --chat-hover: 217 33% 12%;
-    
-    /* Enhanced Sidebar colors */
-    --sidebar-background: 217 33% 9%;
-    --sidebar-foreground: 213 31% 91%;
-    --sidebar-primary: 166 76% 46%;
-    --sidebar-primary-foreground: 217 33% 7%;
-    --sidebar-accent: 217 33% 12%;
-    --sidebar-accent-foreground: 213 31% 91%;
-    --sidebar-border: 217 33% 15%;
-    --sidebar-ring: 166 76% 46%;
-    
-    /* Enhanced Gradients and effects */
-    --gradient-primary: linear-gradient(135deg, hsl(166 76% 46%), hsl(196 76% 46%));
-    --gradient-background: linear-gradient(180deg, hsl(217 33% 7%), hsl(217 33% 9%));
-    --gradient-glass: linear-gradient(135deg, hsl(217 33% 10% / 0.8), hsl(217 33% 15% / 0.6));
-    --gradient-chat-user: linear-gradient(135deg, hsl(166 76% 46%), hsl(156 76% 56%));
-    --gradient-chat-assistant: linear-gradient(135deg, hsl(217 33% 15%), hsl(217 33% 20%));
-    
-    /* Enhanced Shadows and glows */
-    --shadow-glow: 0 0 20px hsl(166 76% 46% / 0.3);
-    --shadow-chat: 0 4px 20px hsl(217 33% 5% / 0.4);
-    --shadow-glass: 0 8px 32px hsl(217 33% 5% / 0.3);
-    --shadow-hover: 0 12px 40px hsl(217 33% 5% / 0.5);
-    --shadow-inner: inset 0 1px 0 hsl(217 33% 20% / 0.1);
-    
+
+    --border: 217 33% 12%;
+    --input: 217 33% 12%;
+    --ring: 166 76% 50%;
+
+    --radius: 0.875rem;
+
+    /* Neo-Glass Chat Colors */
+    --chat-user-bg: 166 76% 50%;
+    --chat-user-fg: 217 33% 4%;
+    --chat-assistant-bg: 217 33% 12%;
+    --chat-assistant-fg: 213 31% 95%;
+    --chat-hover: 217 33% 10%;
+
+    /* Neo-Glass Sidebar */
+    --sidebar-background: 217 33% 5%;
+    --sidebar-foreground: 213 31% 95%;
+    --sidebar-primary: 166 76% 50%;
+    --sidebar-primary-foreground: 217 33% 4%;
+    --sidebar-accent: 217 33% 10%;
+    --sidebar-accent-foreground: 213 31% 95%;
+    --sidebar-border: 217 33% 12%;
+    --sidebar-ring: 166 76% 50%;
+
+    /* Neo-Glass Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(166 76% 50%), hsl(196 76% 50%), hsl(226 76% 50%));
+    --gradient-background: linear-gradient(180deg, hsl(217 33% 4%), hsl(217 33% 6%), hsl(217 33% 8%));
+    --gradient-glass: linear-gradient(135deg, hsl(217 33% 6% / 0.85), hsl(217 33% 12% / 0.65), hsl(217 33% 8% / 0.75));
+    --gradient-chat-user: linear-gradient(135deg, hsl(166 76% 50%), hsl(156 76% 60%), hsl(176 76% 55%));
+    --gradient-chat-assistant: linear-gradient(135deg, hsl(217 33% 12%), hsl(217 33% 18%), hsl(217 33% 15%));
+    --gradient-neo-glass: linear-gradient(135deg, hsl(217 33% 6% / 0.9), hsl(217 33% 12% / 0.7), hsl(217 33% 8% / 0.8));
+
+    /* Neo-Glass Shadows & Glows */
+    --shadow-glow: 0 0 30px hsl(166 76% 50% / 0.4), 0 0 60px hsl(166 76% 50% / 0.2);
+    --shadow-chat: 0 8px 32px hsl(217 33% 3% / 0.5), inset 0 1px 0 hsl(217 33% 20% / 0.1);
+    --shadow-glass: 0 12px 40px hsl(217 33% 3% / 0.4), inset 0 1px 0 hsl(217 33% 20% / 0.05);
+    --shadow-hover: 0 20px 60px hsl(217 33% 3% / 0.6), 0 0 40px hsl(166 76% 50% / 0.3);
+    --shadow-inner: inset 0 2px 4px hsl(217 33% 15% / 0.1), inset 0 -1px 0 hsl(217 33% 25% / 0.05);
+    --shadow-neo: 0 4px 20px hsl(217 33% 3% / 0.3), 0 1px 0 hsl(217 33% 20% / 0.1), inset 0 1px 0 hsl(217 33% 25% / 0.05);
+
     /* Enhanced Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     --transition-elastic: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    
-    /* Glassmorphism effects */
-    --glass-bg: hsl(217 33% 10% / 0.8);
-    --glass-border: hsl(217 33% 20% / 0.2);
-    --glass-blur: blur(12px);
-    --glass-backdrop: backdrop-filter: blur(12px) saturate(180%);
+    --transition-glass: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    /* Neo-Glass Effects */
+    --glass-bg: hsl(217 33% 6% / 0.85);
+    --glass-border: hsl(217 33% 20% / 0.3);
+    --glass-blur: blur(20px);
+    --glass-backdrop: backdrop-filter: blur(20px) saturate(180%) contrast(120%);
+    --neo-glass-bg: linear-gradient(135deg, hsl(217 33% 6% / 0.9), hsl(217 33% 12% / 0.7), hsl(217 33% 8% / 0.8));
+    --neo-glass-border: hsl(217 33% 20% / 0.4);
+    --neo-glass-shadow: 0 8px 32px hsl(217 33% 3% / 0.4), inset 0 1px 0 hsl(217 33% 25% / 0.1);
   }
 
   .dark {
@@ -168,9 +174,102 @@
     @apply glass rounded-xl;
     background: linear-gradient(135deg, hsl(217 33% 10% / 0.9), hsl(217 33% 15% / 0.7));
     border: 1px solid hsl(217 33% 20% / 0.3);
-    box-shadow: 
+    box-shadow:
       var(--shadow-glass),
       var(--shadow-inner);
+  }
+
+  /* Neo-Glass Components */
+  .neo-glass {
+    background: var(--neo-glass-bg);
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    border: 1px solid var(--neo-glass-border);
+    box-shadow: var(--neo-glass-shadow);
+    position: relative;
+  }
+
+  .neo-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(166 76% 50% / 0.3), hsl(196 76% 50% / 0.2), hsl(226 76% 50% / 0.3));
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+
+  .neo-glass-card {
+    @apply neo-glass rounded-xl;
+    background: var(--gradient-neo-glass);
+    border: 1px solid hsl(217 33% 20% / 0.4);
+    box-shadow:
+      var(--shadow-neo),
+      0 0 40px hsl(166 76% 50% / 0.1);
+    transition: var(--transition-glass);
+  }
+
+  .neo-glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      var(--shadow-hover),
+      0 0 60px hsl(166 76% 50% / 0.2);
+  }
+
+  /* Glow Effects */
+  .glow-primary {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .glow-hover:hover {
+    box-shadow: var(--shadow-hover);
+  }
+
+  .glow-pulse {
+    animation: glowPulse 2s ease-in-out infinite alternate;
+  }
+
+  /* Enhanced Interactive Elements */
+  .interactive-element {
+    @apply transition-all duration-300 ease-out;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .interactive-element::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(166 76% 50% / 0.1), transparent);
+    transition: left 0.5s;
+  }
+
+  .interactive-element:hover::before {
+    left: 100%;
+  }
+
+  .interactive-element:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  /* Micro-interactions */
+  .micro-bounce {
+    animation: microBounce 0.6s ease-out;
+  }
+
+  .micro-shake {
+    animation: microShake 0.5s ease-in-out;
+  }
+
+  .micro-glow {
+    animation: microGlow 0.8s ease-out;
   }
 
   /* Enhanced Button Styles */
@@ -477,6 +576,51 @@
   }
 }
 
+@keyframes glowPulse {
+  from {
+    box-shadow: 0 0 20px hsl(166 76% 50% / 0.3), 0 0 40px hsl(166 76% 50% / 0.1);
+  }
+  to {
+    box-shadow: 0 0 40px hsl(166 76% 50% / 0.5), 0 0 80px hsl(166 76% 50% / 0.3);
+  }
+}
+
+@keyframes microBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+  60% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes microShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes microGlow {
+  0% {
+    box-shadow: 0 0 0 0 hsl(166 76% 50% / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px hsl(166 76% 50% / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 hsl(166 76% 50% / 0);
+  }
+}
+
 /* Responsive Design Enhancements */
 @media (max-width: 768px) {
   .chat-message.user {
@@ -674,4 +818,36 @@
     border: 1px solid black !important;
     box-shadow: none !important;
   }
+}
+/* v4 UI Enhancements */
+
+/* Animation for settings panel slide-in */
+@keyframes slide-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-down {
+  animation: slide-in-down 0.2s ease-out;
+}
+
+/* Enhanced glass card hover effects */
+.glass-card:hover {
+  background: linear-gradient(135deg, hsl(217 33% 8% / 0.9), hsl(217 33% 14% / 0.7), hsl(217 33% 10% / 0.8));
+  border-color: hsl(166 76% 50% / 0.3);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Settings button active state */
+.settings-active {
+  background: linear-gradient(135deg, hsl(166 76% 50% / 0.2), hsl(166 76% 60% / 0.1));
+  border: 1px solid hsl(166 76% 50% / 0.4);
+  box-shadow: 0 0 20px hsl(166 76% 50% / 0.3);
 }

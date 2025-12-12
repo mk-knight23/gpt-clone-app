@@ -1,6 +1,6 @@
-# 🤖 CHUTES AI Chat v2.0 - Advanced AI Chat Application
+# 🔥 CHUTES AI Chat v4.0 - Multi-Provider AI Chat Platform
 
-> A cutting-edge, feature-rich AI chat application powered by 5 free AI models through CHUTES API with modern UI/UX, PWA support, and enterprise-grade features
+> Production-ready AI chat application with 10+ models across 4 providers (OpenRouter, MegaLLM, Agent Router, Routeway), enterprise security, comprehensive testing, and advanced features
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Visit_App-blue?style=for-the-badge&logo=react)](https://chutes-ai-chat.vercel.app)
 [![GitHub](https://img.shields.io/badge/GitHub-mk--knight23%2Fgpt--clone--app-black?style=for-the-badge&logo=github)](https://github.com/mk-knight23/gpt-clone-app)
@@ -8,27 +8,76 @@
 [![PWA](https://img.shields.io/badge/PWA-Ready-green?style=for-the-badge&logo=pwa)](https://web.dev/progressive-web-apps/)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AA-blue?style=for-the-badge&logo=accessibility)](https://www.w3.org/WAI/WCAG21/quickref/)
 
-## 🌟 What's New in v2.0
+## 🔥 What's New in v4.0
 
 ### ✨ **Major Upgrades**
-- **🎨 Modern Glassmorphism UI** - Beautiful glassmorphism design with smooth animations
-- **📱 Progressive Web App (PWA)** - Installable, works offline, push notifications
-- **🔧 Advanced Settings Panel** - Temperature control, system prompts, model comparison
-- **📁 File Upload & Processing** - Support for images, documents, code files with AI analysis
-- **⚡ Real-time Streaming** - See AI responses as they're generated
-- **♿ Full Accessibility** - WCAG 2.1 AA compliant with screen reader support
-- **🔒 Enterprise Security** - Input sanitization, rate limiting, CSP headers
-- **📊 Analytics & Monitoring** - Performance tracking, error monitoring, usage analytics
-- **🧪 Comprehensive Testing** - Built-in testing suite with accessibility and security tests
+- **🔄 Multi-Provider Architecture** - Support for 4 AI providers (OpenRouter, MegaLLM, Agent Router, Routeway)
+- **🧠 10+ AI Models** - Access to diverse models from xAI, Google, OpenAI, DeepSeek, Alibaba, and more
+- **🛡️ Enterprise Security** - AES-GCM encryption, circuit breakers, comprehensive rate limiting
+- **🔧 Provider Health Monitoring** - Real-time status checks and automatic failover
+- **📊 Advanced Analytics** - Performance monitoring, error tracking, usage analytics
+- **🧪 Production Testing** - Unit, integration, E2E, security, and accessibility tests
+- **🚀 CI/CD Pipeline** - GitHub Actions with automated testing and deployment
+- **📱 Enhanced PWA** - Improved offline support with dynamic caching
+- **♿ Enhanced Accessibility** - WCAG 2.1 AA with advanced screen reader support
 
-### 🚀 **Enhanced Features**
-- **Message Editing** - Edit your messages after sending
-- **Conversation Branching** - Create branches from any point in conversations
-- **Smart Search** - Search through all your conversations
-- **Export/Import** - Backup and restore your chat data
-- **Keyboard Shortcuts** - Power user shortcuts for everything
-- **Dark/Light Themes** - Automatic theme detection
-- **Mobile Optimized** - Perfect experience on all devices
+### 🚀 **New Features**
+- **Model Comparison Mode** - Side-by-side comparison of multiple AI models
+- **Provider Fallback System** - Automatic switching to backup providers on failure
+- **Advanced Rate Limiting** - Token bucket algorithm with burst allowance
+- **Encrypted Local Storage** - AES-GCM encryption for chat backups
+- **Health Dashboard** - Real-time provider status and performance metrics
+- **Multi-Model Routing** - Intelligent model selection based on use case
+- **Streaming Optimizations** - Improved real-time response handling
+- **Security Headers** - Comprehensive CSP and security headers via Vercel
+
+### 📊 **Provider Support**
+
+| Provider | Models | Key Features | Status |
+|----------|--------|--------------|---------|
+| **OpenRouter** | 6 models | Vision, streaming, high reliability | ✅ Production |
+| **MegaLLM** | 2+ models | Fast inference, cost-effective | ✅ Production |
+| **Agent Router** | 2+ models | Specialized models, research focus | ✅ Production |
+| **Routeway** | 2+ models | Multimodal, enterprise features | ✅ Production |
+
+### 🔄 **Migration from v2/v3**
+
+#### **Breaking Changes**
+- Environment variables renamed (see `.env.example`)
+- API structure changed to support multiple providers
+- Settings store migrated to support provider configurations
+- Service worker updated with dynamic versioning
+
+#### **Migration Steps**
+1. **Backup your data** - Export chats from v2/v3
+2. **Update environment variables**:
+   ```bash
+   cp .env.example .env
+   # Add your new API keys
+   ```
+3. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+4. **Run migration**:
+   ```bash
+   npm run build  # This will handle data migration
+   ```
+5. **Test locally**:
+   ```bash
+   npm run dev
+   ```
+
+#### **New Environment Variables Required**
+```env
+# OpenRouter (Primary provider)
+VITE_OPENROUTER_API_KEY=__OPENROUTER_API_KEY__
+
+# Additional providers (optional but recommended)
+VITE_MEGA_LLM_API_KEY=__MEGA_LLM_API_KEY__
+VITE_AGENT_ROUTER_API_KEY=__AGENT_ROUTER_API_KEY__
+VITE_ROUTEWAY_API_KEY=__ROUTEWAY_API_KEY__
+```
 
 ## 🎯 **5 Free AI Models**
 

@@ -60,8 +60,9 @@ export function PWAInstaller() {
       setInstallStatus("installed");
       
       // Track installation
-      if (typeof (window as any).gtag !== 'undefined') {
-        (window as any).gtag('event', 'pwa_install', {
+      const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'pwa_install', {
           event_category: 'engagement',
           event_label: 'app_installed'
         });
@@ -272,13 +273,15 @@ export function useServiceWorker() {
         }
       });
     }
+  }, []);
 
+  useEffect(() => {
     return () => {
       if (registration) {
         registration.unregister();
       }
     };
-  }, []);
+  }, [registration]);
 
   const updateServiceWorker = () => {
     if (registration && registration.waiting) {
