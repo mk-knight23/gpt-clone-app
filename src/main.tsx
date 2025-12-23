@@ -4,7 +4,7 @@ import './index.css'
 
 // Error boundary for unhandled errors
 window.addEventListener('error', (event) => {
-  console.error('Application error:', event.error);
+  // Application error handled silently in production
 });
 
 // Create and render the React application
@@ -20,8 +20,6 @@ const root = createRoot(rootElement)
 try {
   root.render(<App />)
 } catch (error) {
-  console.error('Failed to render application:', error)
-
   // Fallback UI
   rootElement.innerHTML = `
     <div style="
