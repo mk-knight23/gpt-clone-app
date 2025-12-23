@@ -1,19 +1,6 @@
-/**
- * Unified Settings Store for CHUTES AI Chat v3.0
- *
- * Centralized state management using Zustand with:
- * - Encrypted persistence
- * - Compression
- * - Migration support
- * - Type-safe settings
- */
-
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
-import CryptoJS from 'crypto-js';
+import { persist } from 'zustand/middleware';
 
-// Types for comprehensive settings
 export interface AppSettings {
   // General Settings
   general: {
@@ -26,8 +13,6 @@ export interface AppSettings {
     hapticFeedback: boolean;
     autoSave: boolean;
     compactMode: boolean;
-    animations: boolean;
-    reducedMotion: boolean;
   };
 
   // Appearance Settings
@@ -36,12 +21,11 @@ export interface AppSettings {
     accentColor: string;
     glassmorphism: boolean;
     glowEffects: boolean;
-    neoGlass: boolean;
+    animations: boolean;
     fontSize: 'small' | 'medium' | 'large';
     density: 'compact' | 'comfortable' | 'cozy';
     sidebarPosition: 'left' | 'right';
     messageBubbles: boolean;
-    gradientBackgrounds: boolean;
   };
 
   // AI Models Settings
@@ -56,8 +40,6 @@ export interface AppSettings {
     streaming: boolean;
     autoSwitchModel: boolean;
     modelComparison: boolean;
-    multiModelChat: boolean;
-    modelRouting: boolean;
   };
 
   // Chat Behavior Settings
@@ -71,9 +53,6 @@ export interface AppSettings {
     typingIndicators: boolean;
     readReceipts: boolean;
     messageReactions: boolean;
-    autoSave: boolean;
-    messageContinuation: boolean;
-    promptOptimization: boolean;
   };
 
   // System Prompts Library
@@ -86,8 +65,6 @@ export interface AppSettings {
       category: string;
       tags: string[];
       isDefault: boolean;
-      usageCount: number;
-      lastUsed?: Date;
     }>;
     custom: Array<{
       id: string;
@@ -96,9 +73,7 @@ export interface AppSettings {
       category: string;
       createdAt: Date;
       lastUsed?: Date;
-      usageCount: number;
     }>;
-    favorites: string[];
   };
 
   // Data & Storage Settings
@@ -111,8 +86,6 @@ export interface AppSettings {
     dataRetention: number; // days
     compression: boolean;
     encryption: boolean;
-    syncEnabled: boolean;
-    cloudBackup: boolean;
   };
 
   // Security & Privacy Settings
@@ -126,8 +99,6 @@ export interface AppSettings {
     analyticsEnabled: boolean;
     errorReporting: boolean;
     ipLogging: boolean;
-    auditLogging: boolean;
-    secureDelete: boolean;
   };
 
   // Developer Tools
@@ -139,57 +110,9 @@ export interface AppSettings {
     experimentalFeatures: boolean;
     consoleLogging: boolean;
     networkInspector: boolean;
-    devTools: boolean;
-    hotReload: boolean;
-  };
-
-  // Accessibility Settings
-  accessibility: {
-    highContrast: boolean;
-    largeText: boolean;
-    screenReader: boolean;
-    keyboardNavigation: boolean;
-    focusIndicators: boolean;
-    colorBlindFriendly: boolean;
-    reducedMotion: boolean;
-    skipLinks: boolean;
-  };
-
-  // PWA Settings
-  pwa: {
-    installPrompt: boolean;
-    offlineMode: boolean;
-    pushNotifications: boolean;
-    backgroundSync: boolean;
-    cacheStrategy: 'network-first' | 'cache-first' | 'stale-while-revalidate';
-    updateStrategy: 'prompt' | 'auto' | 'manual';
-  };
-
-  // Voice & Audio Settings
-  voice: {
-    voiceInput: boolean;
-    voiceOutput: boolean;
-    voiceLanguage: string;
-    voiceSpeed: number;
-    voicePitch: number;
-    voiceVolume: number;
-    autoVoice: boolean;
-  };
-
-  // Advanced Features
-  advanced: {
-    multiTabSync: boolean;
-    sessionPresence: boolean;
-    autoTagging: boolean;
-    imageGeneration: boolean;
-    pluginSystem: boolean;
-    apiAdapters: boolean;
-    customModels: boolean;
-    modelBenchmarking: boolean;
   };
 }
 
-// Chat State Types
 export interface ChatState {
   chats: Array<{
     id: string;
@@ -232,7 +155,6 @@ export interface ChatState {
   };
 }
 
-// UI State Types
 export interface UIState {
   sidebarOpen: boolean;
   settingsOpen: boolean;
@@ -253,30 +175,6 @@ export interface UIState {
   drawers: Record<string, boolean>;
 }
 
-// Performance State Types
-export interface PerformanceState {
-  metrics: {
-    loadTime: number;
-    firstPaint: number;
-    largestContentfulPaint: number;
-    firstInputDelay: number;
-    cumulativeLayoutShift: number;
-  };
-  cache: {
-    hits: number;
-    misses: number;
-    size: number;
-  };
-  errors: Array<{
-    id: string;
-    message: string;
-    stack?: string;
-    timestamp: Date;
-    resolved: boolean;
-  }>;
-}
-
-// Default settings
 const defaultSettings: AppSettings = {
   general: {
     theme: 'system',
@@ -288,30 +186,21 @@ const defaultSettings: AppSettings = {
     hapticFeedback: true,
     autoSave: true,
     compactMode: false,
-    animations: true,
-    reducedMotion: false,
   },
   appearance: {
     primaryColor: '#3b82f6',
     accentColor: '#10b981',
     glassmorphism: true,
     glowEffects: true,
-    neoGlass: true,
+    animations: true,
     fontSize: 'medium',
     density: 'comfortable',
     sidebarPosition: 'left',
     messageBubbles: true,
-    gradientBackgrounds: true,
   },
   models: {
     defaultModel: 'zai-org/GLM-4.5-Air',
-    availableModels: [
-      'zai-org/GLM-4.5-Air',
-      'microsoft/WizardLM-2-8x22B',
-      'mistralai/Mistral-7B-Instruct-v0.1',
-      'google/gemma-3-4b-it',
-      'alibaba/Tongyi'
-    ],
+    availableModels: ['zai-org/GLM-4.5-Air', 'microsoft/WizardLM-2-8x22B', 'mistralai/Mistral-7B-Instruct-v0.1'],
     temperature: 0.7,
     maxTokens: 1024,
     topP: 0.9,
@@ -319,9 +208,7 @@ const defaultSettings: AppSettings = {
     presencePenalty: 0,
     streaming: true,
     autoSwitchModel: false,
-    modelComparison: true,
-    multiModelChat: true,
-    modelRouting: true,
+    modelComparison: false,
   },
   chat: {
     systemPrompt: '',
@@ -333,9 +220,6 @@ const defaultSettings: AppSettings = {
     typingIndicators: true,
     readReceipts: false,
     messageReactions: true,
-    autoSave: true,
-    messageContinuation: true,
-    promptOptimization: true,
   },
   prompts: {
     presets: [
@@ -347,7 +231,6 @@ const defaultSettings: AppSettings = {
         category: 'Creative',
         tags: ['creative', 'brainstorming'],
         isDefault: false,
-        usageCount: 0,
       },
       {
         id: 'coding',
@@ -357,21 +240,9 @@ const defaultSettings: AppSettings = {
         category: 'Technical',
         tags: ['programming', 'code'],
         isDefault: false,
-        usageCount: 0,
       },
-      {
-        id: 'research',
-        name: 'Research Assistant',
-        description: 'Specialized in research and analysis',
-        prompt: 'You are a research assistant. Help with gathering information, analysis, and providing comprehensive answers.',
-        category: 'Research',
-        tags: ['research', 'analysis'],
-        isDefault: false,
-        usageCount: 0,
-      }
     ],
     custom: [],
-    favorites: [],
   },
   data: {
     localStorage: true,
@@ -381,166 +252,62 @@ const defaultSettings: AppSettings = {
     exportFormat: 'json',
     dataRetention: 365,
     compression: true,
-    encryption: true,
-    syncEnabled: false,
-    cloudBackup: false,
+    encryption: false,
   },
   security: {
     rateLimiting: true,
     contentFiltering: true,
-    dataEncryption: true,
+    dataEncryption: false,
     sessionTimeout: 60,
     twoFactorAuth: false,
     biometricAuth: false,
     analyticsEnabled: true,
     errorReporting: true,
     ipLogging: false,
-    auditLogging: true,
-    secureDelete: true,
   },
   developer: {
     debugMode: false,
     performanceMonitoring: true,
     apiLogging: false,
-    featureFlags: {
-      voiceInput: true,
-      multiModel: true,
-      advancedMarkdown: true,
-      pluginSystem: false,
-    },
+    featureFlags: {},
     experimentalFeatures: false,
     consoleLogging: true,
     networkInspector: false,
-    devTools: false,
-    hotReload: true,
-  },
-  accessibility: {
-    highContrast: false,
-    largeText: false,
-    screenReader: true,
-    keyboardNavigation: true,
-    focusIndicators: true,
-    colorBlindFriendly: false,
-    reducedMotion: false,
-    skipLinks: true,
-  },
-  pwa: {
-    installPrompt: true,
-    offlineMode: true,
-    pushNotifications: false,
-    backgroundSync: true,
-    cacheStrategy: 'stale-while-revalidate',
-    updateStrategy: 'prompt',
-  },
-  voice: {
-    voiceInput: false,
-    voiceOutput: false,
-    voiceLanguage: 'en-US',
-    voiceSpeed: 1.0,
-    voicePitch: 1.0,
-    voiceVolume: 0.8,
-    autoVoice: false,
-  },
-  advanced: {
-    multiTabSync: true,
-    sessionPresence: true,
-    autoTagging: true,
-    imageGeneration: false,
-    pluginSystem: false,
-    apiAdapters: true,
-    customModels: false,
-    modelBenchmarking: true,
   },
 };
 
-// Custom storage with encryption
-const encryptedStorage = {
-  getItem: (name: string) => {
-    const item = localStorage.getItem(name);
-    if (!item) return null;
-
-    try {
-      const decrypted = CryptoJS.AES.decrypt(item, 'chutes-ai-encryption-key').toString(CryptoJS.enc.Utf8);
-      return JSON.parse(decrypted);
-    } catch {
-      // Fallback to unencrypted data for backward compatibility
-      return JSON.parse(item);
-    }
-  },
-  setItem: (name: string, value: any) => {
-    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(value), 'chutes-ai-encryption-key').toString();
-    localStorage.setItem(name, encrypted);
-  },
-  removeItem: (name: string) => {
-    localStorage.removeItem(name);
-  },
-};
-
-// Settings Store
 interface SettingsStore extends AppSettings {
-  // Actions
   updateSettings: (updates: Partial<AppSettings>) => void;
   resetSettings: () => void;
-  exportSettings: () => string;
-  importSettings: (settings: string) => void;
-  migrateSettings: (oldVersion: string, newVersion: string) => void;
 }
 
 export const useSettingsStore = create<SettingsStore>()(
   persist(
-    immer((set, get) => ({
+    (set) => ({
       ...defaultSettings,
-
       updateSettings: (updates) =>
-        set((state) => {
-          Object.assign(state, updates);
-        }),
-
+        set((state) => ({
+          ...state,
+          ...updates,
+          general: { ...state.general, ...updates.general },
+          appearance: { ...state.appearance, ...updates.appearance },
+          models: { ...state.models, ...updates.models },
+          chat: { ...state.chat, ...updates.chat },
+          prompts: { ...state.prompts, ...updates.prompts },
+          data: { ...state.data, ...updates.data },
+          security: { ...state.security, ...updates.security },
+          developer: { ...state.developer, ...updates.developer },
+        })),
       resetSettings: () =>
         set(() => ({ ...defaultSettings })),
-
-      exportSettings: () => {
-        const settings = get();
-        return JSON.stringify(settings, null, 2);
-      },
-
-      importSettings: (settingsString) => {
-        try {
-          const imported = JSON.parse(settingsString);
-          // Validate imported settings
-          if (typeof imported === 'object' && imported !== null) {
-            set(() => ({ ...defaultSettings, ...imported }));
-          }
-        } catch (error) {
-          console.error('Failed to import settings:', error);
-          throw new Error('Invalid settings format');
-        }
-      },
-
-      migrateSettings: (oldVersion, newVersion) => {
-        // Handle version migrations
-        console.log(`Migrating settings from ${oldVersion} to ${newVersion}`);
-        // Add migration logic here as needed
-      },
-    })),
+    }),
     {
-      name: 'chutes-settings-v3',
-      storage: createJSONStorage(() => encryptedStorage),
-      version: 3,
-      migrate: (persistedState: any, version) => {
-        if (version < 3) {
-          // Migration logic for older versions
-          return { ...defaultSettings, ...persistedState };
-        }
-        return persistedState;
-      },
+      name: 'ai-chat-settings',
     }
   )
 );
 
-// Chat Store
 interface ChatStore extends ChatState {
-  // Actions
   createChat: (branchFrom?: string) => string;
   deleteChat: (chatId: string) => void;
   selectChat: (chatId: string) => void;
@@ -559,7 +326,7 @@ interface ChatStore extends ChatState {
 
 export const useChatStore = create<ChatStore>()(
   persist(
-    immer((set, get) => ({
+    (set, get) => ({
       chats: [],
       activeChat: null,
       searchQuery: '',
@@ -581,80 +348,101 @@ export const useChatStore = create<ChatStore>()(
           isStarred: false,
           branchFrom,
           tags: [],
-          model: 'zai-org/GLM-4.5-Air',
+          model: 'openai/gpt-3.5-turbo',
           category: 'general',
           folder: 'default',
           isPinned: false,
           lastActivity: new Date(),
         };
 
-        set((state) => {
-          state.chats.unshift(newChat);
-          state.activeChat = newChat.id;
-        });
+        set((state) => ({
+          ...state,
+          chats: [newChat, ...state.chats],
+          activeChat: newChat.id,
+        }));
 
         return newChat.id;
       },
 
       deleteChat: (chatId) =>
         set((state) => {
-          state.chats = state.chats.filter(chat => chat.id !== chatId);
-          if (state.activeChat === chatId) {
-            state.activeChat = state.chats[0]?.id || null;
-          }
+          const newChats = state.chats.filter(chat => chat.id !== chatId);
+          return {
+            ...state,
+            chats: newChats,
+            activeChat: state.activeChat === chatId ? (newChats[0]?.id || null) : state.activeChat,
+          };
         }),
 
       selectChat: (chatId) =>
         set((state) => {
-          state.activeChat = chatId;
-          // Update last activity
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            chat.lastActivity = new Date();
-          }
+          const newChats = state.chats.map(chat =>
+            chat.id === chatId ? { ...chat, lastActivity: new Date() } : chat
+          );
+          return {
+            ...state,
+            chats: newChats,
+            activeChat: chatId,
+          };
         }),
 
       updateChat: (chatId, updates) =>
-        set((state) => {
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            Object.assign(chat, updates);
-          }
-        }),
+        set((state) => ({
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === chatId ? { ...chat, ...updates } : chat
+          ),
+        })),
 
       addMessage: (chatId, message) =>
         set((state) => {
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            chat.messages.push(message);
-            chat.messageCount++;
-            chat.lastActivity = new Date();
-            // Update title if it's the first user message
-            if (chat.messages.length === 1 && message.isUser) {
-              chat.title = message.content.slice(0, 50) + (message.content.length > 50 ? '...' : '');
+          const newChats = state.chats.map(chat => {
+            if (chat.id === chatId) {
+              const newMessages = [...chat.messages, message];
+              return {
+                ...chat,
+                messages: newMessages,
+                messageCount: chat.messageCount + 1,
+                lastActivity: new Date(),
+                title: newMessages.length === 1 && message.isUser ? message.content.slice(0, 50) + (message.content.length > 50 ? '...' : '') : chat.title,
+              };
             }
-          }
+            return chat;
+          });
+          return {
+            ...state,
+            chats: newChats,
+          };
         }),
 
       updateMessage: (chatId, messageId, updates) =>
-        set((state) => {
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            const message = chat.messages.find(m => m.id === messageId);
-            if (message) {
-              Object.assign(message, updates);
-            }
-          }
-        }),
+        set((state) => ({
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === chatId
+              ? {
+                  ...chat,
+                  messages: chat.messages.map(msg =>
+                    msg.id === messageId ? { ...msg, ...updates } : msg
+                  ),
+                }
+              : chat
+          ),
+        })),
 
       deleteMessage: (chatId, messageId) =>
-        set((state) => {
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            chat.messages = chat.messages.filter(m => m.id !== messageId);
-            chat.messageCount = Math.max(0, chat.messageCount - 1);
-          }
-        }),
+        set((state) => ({
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === chatId
+              ? {
+                  ...chat,
+                  messages: chat.messages.filter(m => m.id !== messageId),
+                  messageCount: Math.max(0, chat.messageCount - 1),
+                }
+              : chat
+          ),
+        })),
 
       searchChats: (query) => {
         const chats = get().chats;
@@ -678,8 +466,8 @@ export const useChatStore = create<ChatStore>()(
         const exportData = {
           ...chat,
           exportedAt: new Date().toISOString(),
-          version: '3.0',
-          app: 'CHUTES AI Chat v3.0'
+          version: '4.0',
+          app: 'AI Chat'
         };
 
         return JSON.stringify(exportData, null, 2);
@@ -699,57 +487,54 @@ export const useChatStore = create<ChatStore>()(
             lastActivity: new Date(),
           };
 
-          set((state) => {
-            state.chats.unshift(newChat);
-          });
+          set((state) => ({
+            ...state,
+            chats: [newChat, ...state.chats],
+          }));
         } catch (error) {
           throw new Error('Invalid chat data format');
         }
       },
 
       starChat: (chatId) =>
-        set((state) => {
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            chat.isStarred = !chat.isStarred;
-          }
-        }),
+        set((state) => ({
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === chatId ? { ...chat, isStarred: !chat.isStarred } : chat
+          ),
+        })),
 
       pinChat: (chatId) =>
-        set((state) => {
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            chat.isPinned = !chat.isPinned;
-          }
-        }),
+        set((state) => ({
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === chatId ? { ...chat, isPinned: !chat.isPinned } : chat
+          ),
+        })),
 
       tagChat: (chatId, tags) =>
-        set((state) => {
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            chat.tags = tags;
-          }
-        }),
+        set((state) => ({
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === chatId ? { ...chat, tags } : chat
+          ),
+        })),
 
       moveChatToFolder: (chatId, folder) =>
-        set((state) => {
-          const chat = state.chats.find(c => c.id === chatId);
-          if (chat) {
-            chat.folder = folder;
-          }
-        }),
-    })),
+        set((state) => ({
+          ...state,
+          chats: state.chats.map(chat =>
+            chat.id === chatId ? { ...chat, folder } : chat
+          ),
+        })),
+    }),
     {
-      name: 'chutes-chats-v3',
-      storage: createJSONStorage(() => encryptedStorage),
-      version: 3,
+      name: 'ai-chat-store',
     }
   )
 );
 
-// UI Store
 interface UIStore extends UIState {
-  // Actions
   toggleSidebar: () => void;
   toggleSettings: () => void;
   toggleCommandPalette: () => void;
@@ -768,7 +553,7 @@ interface UIStore extends UIState {
 
 export const useUIStore = create<UIStore>()(
   persist(
-    immer((set, get) => ({
+    (set) => ({
       sidebarOpen: true,
       settingsOpen: false,
       commandPaletteOpen: false,
@@ -780,41 +565,14 @@ export const useUIStore = create<UIStore>()(
       modals: {},
       drawers: {},
 
-      toggleSidebar: () =>
-        set((state) => {
-          state.sidebarOpen = !state.sidebarOpen;
-        }),
-
-      toggleSettings: () =>
-        set((state) => {
-          state.settingsOpen = !state.settingsOpen;
-        }),
-
-      toggleCommandPalette: () =>
-        set((state) => {
-          state.commandPaletteOpen = !state.commandPaletteOpen;
-        }),
-
-      toggleModelComparison: () =>
-        set((state) => {
-          state.modelComparisonOpen = !state.modelComparisonOpen;
-        }),
-
-      togglePromptLibrary: () =>
-        set((state) => {
-          state.promptLibraryOpen = !state.promptLibraryOpen;
-        }),
-
-      setVoiceInputActive: (active) =>
-        set((state) => {
-          state.voiceInputActive = active;
-        }),
-
-      toggleFullscreen: () =>
-        set((state) => {
-          state.isFullscreen = !state.isFullscreen;
-        }),
-
+      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+      toggleSettings: () => set((state) => ({ settingsOpen: !state.settingsOpen })),
+      toggleCommandPalette: () => set((state) => ({ commandPaletteOpen: !state.commandPaletteOpen })),
+      toggleModelComparison: () => set((state) => ({ modelComparisonOpen: !state.modelComparisonOpen })),
+      togglePromptLibrary: () => set((state) => ({ promptLibraryOpen: !state.promptLibraryOpen })),
+      setVoiceInputActive: (active) => set((state) => ({ voiceInputActive: active })),
+      toggleFullscreen: () => set((state) => ({ isFullscreen: !state.isFullscreen })),
+      
       addNotification: (notification) =>
         set((state) => {
           const newNotification = {
@@ -823,133 +581,52 @@ export const useUIStore = create<UIStore>()(
             timestamp: new Date(),
             read: false,
           };
-          state.notifications.unshift(newNotification);
+          return {
+            ...state,
+            notifications: [newNotification, ...state.notifications],
+          };
         }),
 
       removeNotification: (id) =>
-        set((state) => {
-          state.notifications = state.notifications.filter(n => n.id !== id);
-        }),
+        set((state) => ({
+          ...state,
+          notifications: state.notifications.filter(n => n.id !== id),
+        })),
 
       markNotificationRead: (id) =>
-        set((state) => {
-          const notification = state.notifications.find(n => n.id === id);
-          if (notification) {
-            notification.read = true;
-          }
-        }),
+        set((state) => ({
+          ...state,
+          notifications: state.notifications.map(n =>
+            n.id === id ? { ...n, read: true } : n
+          ),
+        })),
 
       openModal: (modalId) =>
-        set((state) => {
-          state.modals[modalId] = true;
-        }),
+        set((state) => ({
+          ...state,
+          modals: { ...state.modals, [modalId]: true },
+        })),
 
       closeModal: (modalId) =>
-        set((state) => {
-          state.modals[modalId] = false;
-        }),
+        set((state) => ({
+          ...state,
+          modals: { ...state.modals, [modalId]: false },
+        })),
 
       openDrawer: (drawerId) =>
-        set((state) => {
-          state.drawers[drawerId] = true;
-        }),
+        set((state) => ({
+          ...state,
+          drawers: { ...state.drawers, [drawerId]: true },
+        })),
 
       closeDrawer: (drawerId) =>
-        set((state) => {
-          state.drawers[drawerId] = false;
-        }),
-    })),
+        set((state) => ({
+          ...state,
+          drawers: { ...state.drawers, [drawerId]: false },
+        })),
+    }),
     {
-      name: 'chutes-ui-v3',
-      storage: createJSONStorage(() => localStorage),
-      version: 1,
+      name: 'ai-chat-ui',
     }
   )
 );
-
-// Performance Store
-interface PerformanceStore extends PerformanceState {
-  // Actions
-  recordMetric: (metric: keyof PerformanceState['metrics'], value: number) => void;
-  recordCacheHit: () => void;
-  recordCacheMiss: () => void;
-  updateCacheSize: (size: number) => void;
-  recordError: (error: Omit<PerformanceState['errors'][0], 'id' | 'timestamp' | 'resolved'>) => void;
-  resolveError: (id: string) => void;
-  clearErrors: () => void;
-  getPerformanceReport: () => PerformanceState;
-}
-
-export const usePerformanceStore = create<PerformanceStore>()(
-  persist(
-    immer((set, get) => ({
-      metrics: {
-        loadTime: 0,
-        firstPaint: 0,
-        largestContentfulPaint: 0,
-        firstInputDelay: 0,
-        cumulativeLayoutShift: 0,
-      },
-      cache: {
-        hits: 0,
-        misses: 0,
-        size: 0,
-      },
-      errors: [],
-
-      recordMetric: (metric, value) =>
-        set((state) => {
-          state.metrics[metric] = value;
-        }),
-
-      recordCacheHit: () =>
-        set((state) => {
-          state.cache.hits++;
-        }),
-
-      recordCacheMiss: () =>
-        set((state) => {
-          state.cache.misses++;
-        }),
-
-      updateCacheSize: (size) =>
-        set((state) => {
-          state.cache.size = size;
-        }),
-
-      recordError: (error) =>
-        set((state) => {
-          const newError = {
-            ...error,
-            id: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            timestamp: new Date(),
-            resolved: false,
-          };
-          state.errors.unshift(newError);
-        }),
-
-      resolveError: (id) =>
-        set((state) => {
-          const error = state.errors.find(e => e.id === id);
-          if (error) {
-            error.resolved = true;
-          }
-        }),
-
-      clearErrors: () =>
-        set((state) => {
-          state.errors = [];
-        }),
-
-      getPerformanceReport: () => get(),
-    })),
-    {
-      name: 'chutes-performance-v3',
-      storage: createJSONStorage(() => localStorage),
-      version: 1,
-    }
-  )
-);
-
-// Export types for use in components
-export type { SettingsStore, ChatStore, UIStore, PerformanceStore };

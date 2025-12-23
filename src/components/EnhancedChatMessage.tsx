@@ -1,26 +1,7 @@
-/**
- * Enhanced Chat Message Component for CHUTES AI Chat v3.0
- *
- * Features:
- * - Advanced Markdown rendering with syntax highlighting
- * - LaTeX mathematical expressions
- * - Code blocks with copy functionality
- * - Image preview and gallery
- * - Message reactions and interactions
- * - Neo-Glass styling with micro-interactions
- * - Accessibility improvements
- * - Voice output integration
- */
-
-import { useState, useRef, useEffect, memo } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
-import rehypeHighlight from 'rehype-highlight';
-import rehypeKatex from 'rehype-katex';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
   BotIcon,
   UserIcon,
@@ -34,7 +15,6 @@ import {
   XIcon,
   SparklesIcon,
   CodeIcon,
-  ImageIcon,
   FileTextIcon,
   HeartIcon,
   LaughIcon,
@@ -59,7 +39,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,17 +46,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { useSettingsStore } from "@/lib/store";
 
 interface EnhancedChatMessageProps {
   message: string;
@@ -93,7 +61,6 @@ interface EnhancedChatMessageProps {
   onPin?: (messageId: string) => void;
   onDelete?: (messageId: string) => void;
   onRegenerate?: (messageId: string) => void;
-  onVoiceOutput?: (messageId: string) => void;
   isStreaming?: boolean;
   isBookmarked?: boolean;
   isPinned?: boolean;
@@ -119,11 +86,18 @@ const MarkdownComponents = {
 
     if (!inline && language) {
       return (
-        <CodeBlock
-          language={language}
-          value={String(children).replace(/\n$/, '')}
-          {...props}
-        />
+        <div className="relative group my-4">
+          <div className="flex items-center justify-between bg-muted/30 px-4 py-2 rounded-t-lg border border-border/50">
+            <Badge variant="outline" className="text-xs">
+              {language}
+            </Badge>
+          </div>
+          <pre className="bg-muted/20 p-4 rounded-b-lg overflow-x-auto">
+            <code className="text-sm" {...props}>
+              {children}
+            </code>
+          </pre>
+        </div>
       );
     }
 
@@ -137,7 +111,6 @@ const MarkdownComponents = {
     );
   },
 
-  // Enhanced link component
   a({ children, href, ...props }: any) {
     return (
       <a
@@ -153,7 +126,6 @@ const MarkdownComponents = {
     );
   },
 
-  // Enhanced blockquote
   blockquote({ children, ...props }: any) {
     return (
       <blockquote
@@ -164,143 +136,9 @@ const MarkdownComponents = {
       </blockquote>
     );
   },
-
-  // Enhanced table
-  table({ children, ...props }: any) {
-    return (
-      <div className="overflow-x-auto my-4">
-        <table className="min-w-full border border-border rounded-lg overflow-hidden" {...props}>
-          {children}
-        </table>
-      </div>
-    );
-  },
-
-  th({ children, ...props }: any) {
-    return (
-      <th className="bg-muted/50 px-4 py-2 text-left font-semibold border-b border-border" {...props}>
-        {children}
-      </th>
-    );
-  },
-
-  td({ children, ...props }: any) {
-    return (
-      <td className="px-4 py-2 border-b border-border/50" {...props}>
-        {children}
-      </td>
-    );
-  },
 };
 
-// Code block component with copy functionality
-function CodeBlock({ language, value }: { language: string; value: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy code:', err);
-    }
-  };
-
-  return (
-    <div className="relative group my-4">
-      <div className="flex items-center justify-between bg-muted/30 px-4 py-2 rounded-t-lg border border-border/50">
-        <Badge variant="outline" className="text-xs">
-          {language}
-        </Badge>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={handleCopy}
-          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          {copied ? (
-            <CheckIcon className="w-3 h-3 text-green-500" />
-          ) : (
-            <CopyIcon className="w-3 h-3" />
-          )}
-        </Button>
-      </div>
-      <SyntaxHighlighter
-        language={language}
-        style={oneDark}
-        className="rounded-b-lg !mt-0"
-        customStyle={{
-          margin: 0,
-          borderTopLeftRadius: 0,
-          borderTopRightRadius: 0,
-        }}
-      >
-        {value}
-      </SyntaxHighlighter>
-    </div>
-  );
-}
-
-// Image gallery component
-function ImageGallery({ attachments }: { attachments: EnhancedChatMessageProps['attachments'] }) {
-  const images = attachments?.filter(att => att.type === 'image') || [];
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-  if (images.length === 0) return null;
-
-  return (
-    <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 my-4">
-        {images.map((image) => (
-          <div
-            key={image.id}
-            className="relative group cursor-pointer neo-glass-card overflow-hidden"
-            onClick={() => setSelectedImage(image.url || '')}
-          >
-            <img
-              src={image.url}
-              alt={image.name}
-              className="w-full h-32 object-cover transition-transform group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <ExternalLinkIcon className="w-6 h-6 text-white" />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Image Modal */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative max-w-4xl max-h-full">
-            <img
-              src={selectedImage}
-              alt="Preview"
-              className="max-w-full max-h-full object-contain rounded-lg"
-            />
-            <Button
-              size="sm"
-              variant="secondary"
-              className="absolute top-2 right-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedImage(null);
-              }}
-            >
-              <XIcon className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-export const EnhancedChatMessage = memo(({
+export const EnhancedChatMessage = ({
   message,
   isUser,
   timestamp,
@@ -314,7 +152,6 @@ export const EnhancedChatMessage = memo(({
   onPin,
   onDelete,
   onRegenerate,
-  onVoiceOutput,
   isStreaming = false,
   isBookmarked = false,
   isPinned = false,
@@ -329,25 +166,9 @@ export const EnhancedChatMessage = memo(({
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(message);
   const [showActions, setShowActions] = useState(false);
-  const [showReactions, setShowReactions] = useState(false);
-  const [reaction, setReaction] = useState<'like' | 'dislike' | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const settings = useSettingsStore();
-
-  // Emoji reactions
-  const emojiReactions = [
-    { emoji: '❤️', name: 'love', icon: HeartIcon, color: 'text-red-500' },
-    { emoji: '😂', name: 'laugh', icon: LaughIcon, color: 'text-yellow-500' },
-    { emoji: '😮', name: 'surprise', icon: FlameIcon, color: 'text-orange-500' },
-    { emoji: '😢', name: 'sad', icon: FrownIcon, color: 'text-blue-500' },
-    { emoji: '😡', name: 'angry', icon: AngryIcon, color: 'text-red-600' },
-    { emoji: '🔥', name: 'fire', icon: FlameIcon, color: 'text-orange-600' },
-    { emoji: '⭐', name: 'star', icon: StarIcon, color: 'text-yellow-400' },
-    { emoji: '⚡', name: 'zap', icon: ZapIcon, color: 'text-yellow-300' }
-  ];
+  const [reaction, setReaction] = useState<'like' | 'dislike' | null>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message);
@@ -391,13 +212,6 @@ export const EnhancedChatMessage = memo(({
     }
   };
 
-  const handleVoiceOutput = () => {
-    if (onVoiceOutput && messageId) {
-      setIsSpeaking(!isSpeaking);
-      onVoiceOutput(messageId);
-    }
-  };
-
   const formatTimestamp = (date: Date) => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -418,15 +232,14 @@ export const EnhancedChatMessage = memo(({
       return (
         <div className="space-y-3">
           <Textarea
-            ref={textareaRef}
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
             onKeyDown={handleKeyPress}
-            className="min-h-[80px] resize-none input-glass"
+            className="min-h-[80px] resize-none"
             placeholder="Edit your message..."
           />
           <div className="flex items-center space-x-2">
-            <Button size="sm" onClick={handleSaveEdit} className="btn-primary">
+            <Button size="sm" onClick={handleSaveEdit}>
               <CheckIcon className="w-3 h-3 mr-1" />
               Save
             </Button>
@@ -492,8 +305,7 @@ export const EnhancedChatMessage = memo(({
           shouldCollapse && "max-h-32 overflow-hidden relative"
         )}>
           <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkMath]}
-            rehypePlugins={[rehypeHighlight, rehypeKatex]}
+            remarkPlugins={[remarkGfm]}
             components={MarkdownComponents}
           >
             {shouldCollapse ? message.substring(0, 1000) + '...' : message}
@@ -504,20 +316,18 @@ export const EnhancedChatMessage = memo(({
           )}
         </div>
 
-        {/* Image Gallery */}
-        <ImageGallery attachments={attachments} />
-
-        {/* Other Attachments */}
-        {attachments.filter(att => att.type !== 'image').length > 0 && (
+        {/* Attachments */}
+        {attachments.length > 0 && (
           <div className="space-y-2">
-            {attachments.filter(att => att.type !== 'image').map((attachment) => (
+            {attachments.map((attachment) => (
               <div
                 key={attachment.id}
-                className="neo-glass-card p-3 rounded-lg flex items-center space-x-3 interactive-element"
+                className="p-3 rounded-lg flex items-center space-x-3 border border-border/50"
               >
                 <div className="w-10 h-10 bg-muted rounded flex items-center justify-center">
                   {attachment.type === 'document' && <FileTextIcon className="w-5 h-5" />}
                   {attachment.type === 'code' && <CodeIcon className="w-5 h-5" />}
+                  {attachment.type === 'image' && <img src={attachment.url} alt={attachment.name} className="w-5 h-5 rounded" />}
                   {attachment.type === 'other' && <FileTextIcon className="w-5 h-5" />}
                 </div>
 
@@ -541,18 +351,10 @@ export const EnhancedChatMessage = memo(({
     );
   };
 
-  // Auto-focus edit textarea
-  useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      textareaRef.current.focus();
-      textareaRef.current.setSelectionRange(editContent.length, editContent.length);
-    }
-  }, [isEditing, editContent.length]);
-
   return (
     <div
       className={cn(
-        "group flex w-full py-6 px-4 animate-slide-in-up",
+        "group flex w-full py-6 px-4",
         isUser ? "justify-end" : "justify-start"
       )}
       onMouseEnter={() => setShowActions(true)}
@@ -561,8 +363,8 @@ export const EnhancedChatMessage = memo(({
       <div className="flex max-w-[85%] space-x-4">
         {!isUser && (
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gradient-primary flex items-center justify-center shadow-lg glow-primary">
-              <BotIcon className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg">
+              <BotIcon className="w-5 h-5 text-primary-foreground" />
             </div>
           </div>
         )}
@@ -571,7 +373,7 @@ export const EnhancedChatMessage = memo(({
           {/* Message Bubble */}
           <div
             className={cn(
-              "enhanced-chat-message relative",
+              "relative",
               isUser ? "user" : "assistant",
               isPinned && "ring-2 ring-primary/50"
             )}
@@ -585,274 +387,67 @@ export const EnhancedChatMessage = memo(({
               </div>
             )}
 
-            {/* Emoji Reactions Bar */}
-            {!isUser && Object.keys(reactions).length > 0 && (
-              <div className="flex items-center space-x-1 mt-2 mb-1">
-                {Object.entries(reactions).map(([emoji, count]) => (
-                  <TooltipProvider key={emoji}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className={cn(
-                            "h-6 px-2 text-xs rounded-full neo-glass hover:bg-primary/10",
-                            userReaction === emoji && "bg-primary/20 text-primary"
-                          )}
-                          onClick={() => onReact && messageId && onReact(messageId, emoji)}
-                        >
-                          <span className="mr-1">{emoji}</span>
-                          <span>{count}</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>React with {emoji}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ))}
-              </div>
-            )}
-
             {/* Message Actions */}
             <div className={cn(
-              "message-actions",
-              showActions && "opacity-100"
+              "flex items-center justify-between mt-3",
+              showActions ? "opacity-100" : "opacity-0"
             )}>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground/70">
-                  {formatTimestamp(timestamp)}
-                </span>
-
-                {/* Voice Output Button */}
-                {settings.voice.voiceOutput && !isUser && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={handleVoiceOutput}
-                    className={cn(
-                      "action-btn ml-2",
-                      isSpeaking && "text-primary"
-                    )}
-                  >
-                    {isSpeaking ? (
-                      <VolumeXIcon className="w-3 h-3" />
-                    ) : (
-                      <Volume2Icon className="w-3 h-3" />
-                    )}
-                  </Button>
-                )}
-              </div>
+              <span className="text-xs text-muted-foreground/70">
+                {formatTimestamp(timestamp)}
+              </span>
 
               <div className="flex items-center space-x-1">
-                {/* Emoji Reaction Button */}
-                {!isUser && (
-                  <Popover open={showReactions} onOpenChange={setShowReactions}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="action-btn"
-                      >
-                        <span className="text-sm">😊</span>
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-2" align="start">
-                      <div className="flex space-x-1">
-                        {emojiReactions.map((reaction) => (
-                          <TooltipProvider key={reaction.name}>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="h-8 w-8 p-0 hover:bg-muted/50"
-                                  onClick={() => {
-                                    if (onReact && messageId) {
-                                      onReact(messageId, reaction.emoji);
-                                    }
-                                    setShowReactions(false);
-                                  }}
-                                >
-                                  <span className="text-lg">{reaction.emoji}</span>
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>React with {reaction.emoji}</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        ))}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                )}
-
                 {/* Copy Button */}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="action-btn"
-                        onClick={handleCopy}
-                      >
-                        <CopyIcon className="w-3 h-3" />
-                        {copied && <span className="ml-1 text-xs">Copied!</span>}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Copy message</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={handleCopy}
+                >
+                  <CopyIcon className="w-3 h-3" />
+                  {copied && <span className="ml-1 text-xs">Copied!</span>}
+                </Button>
 
                 {/* Quick Actions */}
                 {!isUser && (
                   <>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className={cn(
-                              "action-btn",
-                              reaction === 'like' && "text-green-400"
-                            )}
-                            onClick={() => handleReaction('like')}
-                          >
-                            <ThumbsUpIcon className="w-3 h-3" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Like this response</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className={cn(
+                        "h-8 w-8 p-0",
+                        reaction === 'like' && "text-green-400"
+                      )}
+                      onClick={() => handleReaction('like')}
+                    >
+                      <ThumbsUpIcon className="w-3 h-3" />
+                    </Button>
 
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className={cn(
-                              "action-btn",
-                              reaction === 'dislike' && "text-red-400"
-                            )}
-                            onClick={() => handleReaction('dislike')}
-                          >
-                            <ThumbsDownIcon className="w-3 h-3" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Dislike this response</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className={cn(
+                        "h-8 w-8 p-0",
+                        reaction === 'dislike' && "text-red-400"
+                      )}
+                      onClick={() => handleReaction('dislike')}
+                    >
+                      <ThumbsDownIcon className="w-3 h-3" />
+                    </Button>
                   </>
                 )}
 
                 {/* Edit Button (User only) */}
                 {isUser && onEdit && (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="action-btn"
-                          onClick={handleEdit}
-                        >
-                          <EditIcon className="w-3 h-3" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Edit message</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0"
+                    onClick={handleEdit}
+                  >
+                    <EditIcon className="w-3 h-3" />
+                  </Button>
                 )}
-
-                {/* Enhanced Quick Actions Menu */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="action-btn"
-                    >
-                      <MoreHorizontalIcon className="w-3 h-3" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="neo-glass-card">
-                    {/* Primary Actions */}
-                    {onReply && (
-                      <DropdownMenuItem onClick={() => onReply(messageId!)}>
-                        <ReplyIcon className="w-4 h-4 mr-2" />
-                        Reply
-                      </DropdownMenuItem>
-                    )}
-
-                    {onBookmark && (
-                      <DropdownMenuItem onClick={() => onBookmark(messageId!)}>
-                        <BookmarkIcon className={cn("w-4 h-4 mr-2", isBookmarked && "fill-current")} />
-                        {isBookmarked ? 'Remove Bookmark' : 'Bookmark'}
-                      </DropdownMenuItem>
-                    )}
-
-                    {onPin && (
-                      <DropdownMenuItem onClick={() => onPin(messageId!)}>
-                        <PinIcon className={cn("w-4 h-4 mr-2", isPinned && "fill-current")} />
-                        {isPinned ? 'Unpin' : 'Pin'}
-                      </DropdownMenuItem>
-                    )}
-
-                    <DropdownMenuSeparator />
-
-                    {/* Content Actions */}
-                    {onShare && (
-                      <DropdownMenuItem onClick={() => onShare(messageId!)}>
-                        <ShareIcon className="w-4 h-4 mr-2" />
-                        Share
-                      </DropdownMenuItem>
-                    )}
-
-                    <DropdownMenuItem onClick={handleCopy}>
-                      <CopyIcon className="w-4 h-4 mr-2" />
-                      Copy
-                    </DropdownMenuItem>
-
-                    {!isUser && onRegenerate && (
-                      <DropdownMenuItem onClick={() => onRegenerate(messageId!)}>
-                        <RefreshCwIcon className="w-4 h-4 mr-2" />
-                        Regenerate
-                      </DropdownMenuItem>
-                    )}
-
-                    <DropdownMenuSeparator />
-
-                    {/* Destructive Actions */}
-                    {onDelete && (
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={() => onDelete(messageId!)}
-                      >
-                        <TrashIcon className="w-4 h-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    )}
-
-                    {!isUser && (
-                      <DropdownMenuItem className="text-destructive focus:text-destructive">
-                        <FlagIcon className="w-4 h-4 mr-2" />
-                        Report
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
             </div>
           </div>
@@ -860,7 +455,7 @@ export const EnhancedChatMessage = memo(({
 
         {isUser && (
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg glow-primary">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg">
               <UserIcon className="w-5 h-5 text-primary-foreground" />
             </div>
           </div>
@@ -868,6 +463,4 @@ export const EnhancedChatMessage = memo(({
       </div>
     </div>
   );
-});
-
-EnhancedChatMessage.displayName = 'EnhancedChatMessage';
+};

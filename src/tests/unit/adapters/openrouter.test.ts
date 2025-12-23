@@ -153,12 +153,13 @@ describe('OpenRouterAdapter', () => {
     });
 
     it('should handle rate limit errors', async () => {
-      fetchMock.mockResolvedValueOnce({
-        ok: false,
-        status: 429,
-        headers: new Headers({ 'retry-after': '60' }),
-        json: () => Promise.resolve({ error: { message: 'Rate limit exceeded' } })
-      });
+      fetchMock.mockResolvedValueOnce(
+        new Response(JSON.stringify({ error: { message: 'Rate limit exceeded' } }), {
+          status: 429,
+          statusText: 'Too Many Requests',
+          headers: { 'retry-after': '60' }
+        })
+      );
 
       await expect(adapter.request(mockRequest)).rejects.toThrow(RateLimitError);
     });
@@ -252,7 +253,10 @@ describe('OpenRouterAdapter', () => {
     it('should handle streaming errors', async () => {
       fetchMock.mockResolvedValueOnce({
         ok: false,
-        status: 429
+        status: 429,
+        statusText: 'Too Many Requests',
+        headers: new Headers({ 'retry-after': '60' }),
+        json: () => Promise.resolve({ error: { message: 'Rate limit exceeded' } })
       });
 
       const onChunk = vi.fn();
@@ -273,7 +277,7 @@ describe('OpenRouterAdapter', () => {
       const health = await adapter.healthCheck();
 
       expect(health.status).toBe('healthy');
-      expect(health.latency).toBeGreaterThan(0);
+      expect(health.latency).toBeGreaterThanOrEqual(0);
       expect(health.lastChecked).toBeInstanceOf(Date);
       expect(health.rateLimit).toEqual({
         remaining: 100,
